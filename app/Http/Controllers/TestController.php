@@ -120,8 +120,72 @@ class TestController extends Controller
 		return redirect()->route('index');
     }
 
-    public function test()
+    public function test(\App\Test $test)
     {
+    	$session = $test->session;
+    	if ($session == null) {
+    		$session = $test->session()->create();
+    	}
+    	$unsolved_question_ids = new Collection();
+    	foreach ($session->questions as $question) {
+    		$unsolved_question_ids->push($question->id);
+    	}
+    	$questions = $test->questions()->whereNotIn('id', $unsolved_question_ids)->get();
+    	if ($questions->count() == 0) {
+    		$session->finished = true;
+    		$session->save();
+    		return redirect()->route('result', ['test' => $test]);
+    	}
+    	return view('test', ['test' => $test, 'question' => $questions->first()]);
+    }
 
+    public function post_answer(Request $request, \App\Test $test)
+    {
+    	if (!isset($request->question_id)) {
+    		return redirect()->back();
+    	}
+    	$session = $test->session;
+    	$answer = false;
+    	if ($request->answer == "1") {
+    		$answer = true;
+    	}
+    	$session->questions()->attach($request->question_id, ['answer' => $answer]);
+    	return redirect()->route('test', ['test' => $test]);
+    }
+
+    public function result(\App\Test $test) 
+    {
+    	$hypotheses = new Collection();
+    	foreach (\App\Hypothesis::all() as $hypothesis) {
+    		$new_hypothesis = new \App\Hypothesis();
+    		$new_hypothesis->id = $hypothesis->id;
+			$new_hypothesis->name = $hypothesis->name;
+			$new_hypothesis->prior = $hypothesis->prior;
+			$hypotheses->push($new_hypothesis);
+    	}
+    	$session = $test->session;
+    	foreach ($session->questions as $question) {
+    		$question_hypotheses = $question->hypotheses;
+    		$new_hypotheses = new Collection();
+    		foreach ($question_hypotheses as $q_hypothesis) {
+
+    			$prior = $q_hypothesis->calc(
+    				$hypotheses->where('id', $q_hypothesis->id)->first()->prior,
+    				$question->pivot->answer, 
+    				$q_hypothesis->pivot->plus, 
+    				$q_hypothesis->pivot->minus
+    			);
+
+    			$new_hypothesis = new \App\Hypothesis();
+    			$new_hypothesis->id = $q_hypothesis->id;
+    			$new_hypothesis->name = $q_hypothesis->name;
+    			$new_hypothesis->prior = $prior;
+    			$new_hypotheses->push($new_hypothesis);
+    		}
+    		if ($new_hypotheses->count() > 0) {
+    			$hypotheses = $new_hypotheses;
+    		}
+    	}
+    	return view('result', ['test' => $test, 'hypotheses' => $hypotheses->sortByDesc('prior')]);
     }
 }

@@ -15,4 +15,9 @@ class Question extends Model
     {
     	return $this->belongsToMany(Hypothesis::class)->withPivot('plus', 'minus');
     }
+
+    public function sessions()
+    {
+    	return $this->belongsToMany(Session::class, 'session_questions')->withPivot('answer');
+    }
 }

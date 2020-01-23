@@ -7,7 +7,7 @@
 <body>
 	@foreach($tests as $test)
 		<div>
-			<a href="{{route('test')}}">
+			<a href="{{route('test', ['test'=> $test])}}">
 				<span>{{$test->name}}</span>
 			</a>
 		</div>
