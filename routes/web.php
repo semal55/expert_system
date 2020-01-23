@@ -13,9 +13,11 @@
 
 Route::get('/', "TestController@index")->name('index');
 
-Route::get('/mkb', 'TestController@mkb')->name('mkb');
-Route::post('/mkb', 'TestController@send')->name('send_test');
+Route::get('mkb', 'TestController@mkb')->name('mkb');
+Route::post('mkb', 'TestController@send')->name('send_test');
 
-Route::get('/test/{test}', 'TestController@test')->name('test');
-Route::post('/test/{test}', 'TestController@post_answer')->name('post_answer');
+Route::get('test/{test}', 'TestController@test')->name('test');
+Route::post('test/{test}', 'TestController@post_answer')->name('post_answer');
 Route::get('result/{test}', 'TestController@result')->name('result');
+
+Route::get('reset/{test}', 'TestController@reset')->name('reset');

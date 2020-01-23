@@ -9,9 +9,24 @@
 	<form action="{{route('post_answer', ['test' => $test])}}" method="post">
 		{{csrf_field()}}
 		<input type="text" hidden="" name="question_id" value="{{$question->id}}">
-		<input type="radio" name="answer" value="1" checked/> Yes
-		<input type="radio" name="answer" value="0" /> No
-		<input type="submit" value="Ответить"/>
+		<div>
+			<input type="radio" name="answer" value="0" checked/> Yes
+		</div>
+		<div>
+			<input type="radio" name="answer" value="1"/> Rather Yes
+		</div>
+		<div>
+			<input type="radio" name="answer" value="2"/> Not sure
+		</div>
+		<div>
+			<input type="radio" name="answer" value="3"/> Rather No
+		</div>
+		<div>
+			<input type="radio" name="answer" value="4"/> No
+		</div>
+		<div>
+			<input type="submit" value="Ответить"/>
+		</div>
 	</form>
 </body>
 </html>

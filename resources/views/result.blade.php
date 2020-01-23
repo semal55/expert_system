@@ -11,5 +11,9 @@
 		<span>{{$hypothesis->prior}}</span>
 	</div>
 	@endforeach
+
+	<div>
+		<a href="{{route('reset', ['test' => $test])}}">Reset answers</a>
+	</div>
 </body>
 </html>

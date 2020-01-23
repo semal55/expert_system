@@ -15,4 +15,11 @@ class Session extends Model
     {
     	return $this->belongsToMany(Question::class, 'session_questions')->withPivot('answer');
     }
+
+    public function delete()
+    {
+        $this->questions()->sync([]);
+
+        return parent::delete();
+    }
 }

@@ -17,7 +17,7 @@ class SessionQuestionsTable extends Migration
             $table->bigIncrements('id');
             $table->bigInteger('session_id')->index();
             $table->bigInteger('question_id')->index();
-            $table->boolean('answer')->default(false);
+            $table->string('answer')->default(false);
             $table->timestamps();
         });
     }

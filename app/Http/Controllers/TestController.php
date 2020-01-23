@@ -145,11 +145,7 @@ class TestController extends Controller
     		return redirect()->back();
     	}
     	$session = $test->session;
-    	$answer = false;
-    	if ($request->answer == "1") {
-    		$answer = true;
-    	}
-    	$session->questions()->attach($request->question_id, ['answer' => $answer]);
+    	$session->questions()->attach($request->question_id, ['answer' => $request->answer]);
     	return redirect()->route('test', ['test' => $test]);
     }
 
@@ -187,5 +183,14 @@ class TestController extends Controller
     		}
     	}
     	return view('result', ['test' => $test, 'hypotheses' => $hypotheses->sortByDesc('prior')]);
+    }
+
+    public function reset(\App\Test $test)
+    {
+        $session = $test->session;
+        if ($session !== null) {
+            $session->delete();
+        }
+        return redirect()->route('index');
     }
 }
